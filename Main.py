@@ -7,8 +7,8 @@ manipuladorReg = open('registers', 'r')
 regs = manipuladorReg.readlines()
 
 
-instructionsVector = ['add', 'addi', 'lw', 'j', 'beq'] #instruções aceitas
-instructionIndexRI = [0, 1, 2] #Index das instruções do tipo R e I
+instructionsVector = ['add', 'addi', 'lw', 'j', 'beq', 'sw'] #instruções aceitas
+instructionIndexRI = [0, 1, 2, 5] #Index das instruções do tipo R e I
 instructionIndexBranchs = [3, 4]
 labels = {}
 
@@ -40,6 +40,14 @@ def executeBranchs(labels,instructionIndex,instructionLine,lineRead,registers):
             ctrl = lineRead
     return ctrl
 
+def executeSw(instructionLine, registers, instructionIndex, dataMemory):
+    adress = instructionLine[3]
+    adress = adress[1:3]
+    adress = registers[adress]
+    adress = adress + int(instructionLine[2])
+    content = registers[instructionLine[1]]
+    return [adress, content]
+
 while (True):
     print(instructionList[lineRead])
     instructionLine = instructionList[lineRead].split(' ')
@@ -49,7 +57,12 @@ while (True):
                 instructionIndex = instructionsVector.index(x)
                 break
         if (instructionIndex in instructionIndexRI):
-            registers[instructionLine[1]] = executeRI(instructionLine, registers, instructionIndex, dataMemory)
+            if (instructionIndex != 5):
+                registers[instructionLine[1]] = executeRI(instructionLine, registers, instructionIndex, dataMemory)
+            else:
+                ctrlVector = executeSw(instructionLine, registers, instructionIndex, dataMemory)
+                dataMemory[ctrlVector[0]][0] = ctrlVector[1]
+
         if(instructionIndex in instructionIndexBranchs):
             lineRead = executeBranchs(labels,instructionIndex,instructionLine,lineRead,registers)
 

@@ -1,2 +1,3 @@
 for:
-lw t0 4 (t3)
+addi t0 t0 11
+sw t0 4 (t3)
