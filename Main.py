@@ -32,10 +32,16 @@ def executeRI(instructionLine, registers, instructionIndex, dataMemory):
     return ctrl
 def executeBranchs(labels,instructionIndex,instructionLine,lineRead,registers):
     if(instructionIndex == 3):
-        ctrl = labels[instructionLine[1]]
+        print(instructionLine[1])
+        keyStr = instructionLine[1]
+        keyStr = keyStr[:-1]
+        keyToBeStored = keyStr
+        ctrl = labels[keyStr]
     if (instructionIndex == 4):
         if (registers[instructionLine[1]] == registers[instructionLine[2]]):
-            ctrl = labels[instructionLine[3]]
+            keyStr = instructionLine[3]
+            keyStr = keyStr[:-1]
+            ctrl = labels[keyStr]
         else:
             ctrl = lineRead
     return ctrl
@@ -48,6 +54,20 @@ def executeSw(instructionLine, registers, instructionIndex, dataMemory):
     content = registers[instructionLine[1]]
     return [adress, content]
 
+lineRead = 0
+while (True):
+    if (lineRead == len(instructionList)):
+        break
+    instructionLine = instructionList[lineRead].split(' ')
+    if (len(instructionLine) == 1):
+        keyStr = instructionLine[0]
+        keyStr = keyStr[:-2]
+        keyToBeStored = keyStr
+        labels[keyToBeStored] = lineRead
+    lineRead+=1
+
+print(labels)
+lineRead = 0
 while (True):
     print(instructionList[lineRead])
     instructionLine = instructionList[lineRead].split(' ')
@@ -65,12 +85,6 @@ while (True):
 
         if(instructionIndex in instructionIndexBranchs):
             lineRead = executeBranchs(labels,instructionIndex,instructionLine,lineRead,registers)
-
-    else:
-        keyToBeStored = instructionLine[0]
-        keyToBeStored = keyToBeStored[:3]
-        labels[keyToBeStored] = lineRead
-
 
 
 
